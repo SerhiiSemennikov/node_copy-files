@@ -8,11 +8,11 @@ async function copyFileWithValidation(from, to) {
     return from === to;
   };
   const valid = () => {
-    return !isNaN(from) || !isNaN(to);
+    return typeof from === 'string' && typeof to === 'string';
   };
 
   try {
-    if (valid()) {
+    if (!valid()) {
       throw new Error('Not valid path');
     }
   } catch (error) {
@@ -44,11 +44,11 @@ async function copyFileWithValidation(from, to) {
     console.log(`File copied from ${from} to ${to}`);
   } catch (error) {
     if (error.code === 'ENOENT') {
-      console.error('No sush file', error);
+      console.error('No such file', error);
     }
 
     if (error.code === 'EISDIR') {
-      throw ('No such directory', error);
+      throw new Error('No such directory');
     }
     console.error(`Error during file copy: ${error.message}`);
   }
@@ -58,11 +58,11 @@ async function main() {
   const args = process.argv.slice(2);
   const [fromPath, toPath] = args;
   const exist = () => {
-    return !fromPath || !toPath;
+    return fromPath && toPath;
   };
 
   try {
-    if (exist()) {
+    if (!exist()) {
       throw new Error('One or both file paths are missing');
     }
   } catch (Er) {
